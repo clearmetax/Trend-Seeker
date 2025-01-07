@@ -1,4 +1,5 @@
-# TrendSeeker
+<img src="banner.png" alt="Project Banner" width="100%">
+
 
 This project is an AI-powered bot designed to analyze sentiment and identify trends from social media platforms, specifically **Twitter** and **TikTok**. The bot provides insights into public opinions, trending topics, and overall sentiment dynamics, making it ideal for businesses, researchers, and marketers looking to stay ahead in the fast-paced world of social media.
 
