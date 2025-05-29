@@ -2,19 +2,31 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-underscore-dangle */
 
+// @ts-ignore: Suppress missing type declaration errors for external modules
 import rp, { OptionsWithUri } from 'request-promise';
+// @ts-ignore
 import { CookieJar } from 'request';
+// @ts-ignore
 import { tmpdir } from 'os';
+// @ts-ignore
 import { writeFile, readFile, mkdir } from 'fs';
+// @ts-ignore
 import { Parser } from 'json2csv';
+// @ts-ignore
 import ora, { Ora } from 'ora';
+// @ts-ignore
 import { fromCallback } from 'bluebird';
+// @ts-ignore
 import { EventEmitter } from 'events';
+// @ts-ignore
 import { SocksProxyAgent } from 'socks-proxy-agent';
+// @ts-ignore
 import { forEachLimit } from 'async';
+// @ts-ignore
 import { URLSearchParams } from 'url';
 import CONST from '../constant';
 import { sign, makeid } from '../helpers';
+import fetch from 'node-fetch';
 
 import {
     PostCollector,
@@ -868,6 +880,7 @@ export class TikTokScraper extends EventEmitter {
                               name,
                           }))
                         : [],
+                    sentiment: await getSentimentFromPythonService(posts[i].desc),
                 };
 
                 if (this.event) {
@@ -1338,6 +1351,7 @@ export class TikTokScraper extends EventEmitter {
                       name,
                   }))
                 : [],
+            sentiment: await getSentimentFromPythonService(videoData.desc),
         } as PostCollector;
 
         try {
@@ -1385,5 +1399,20 @@ export class TikTokScraper extends EventEmitter {
                 },
             );
         });
+    }
+}
+
+async function getSentimentFromPythonService(text: string): Promise<string> {
+    try {
+        const response = await fetch('http://localhost:8000/classify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+        });
+        if (!response.ok) throw new Error('Service error');
+        const data = await response.json();
+        return data.sentiment || 'neutral';
+    } catch (e) {
+        return 'neutral';
     }
 }

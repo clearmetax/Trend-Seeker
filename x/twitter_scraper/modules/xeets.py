@@ -3,8 +3,15 @@ from requests_html import HTMLSession, HTML
 from datetime import datetime
 from urllib.parse import quote
 from lxml.etree import ParserError
+from ai.sentiment import SentimentAnalyzer
 
 session = HTMLSession()
+
+analyzer = None
+try:
+    analyzer = SentimentAnalyzer()
+except Exception:
+    pass
 
 def get_tweets(query, pages=25):
     """Gets tweets for a given user, via the Twitter frontend API."""
@@ -153,6 +160,7 @@ def get_tweets(query, pages=25):
                             "photos": photos,
                             "videos": videos,
                         },
+                        **({"sentiment": analyzer.classify(text)} if analyzer else {}),
                     }
                 )
 
