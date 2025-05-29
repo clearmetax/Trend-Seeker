@@ -23,13 +23,16 @@ def get_api():
 def fetch_tweets(query: str, count: int = 100) -> List[Dict]:
     api = get_api()
     tweets = []
-    for status in tweepy.Cursor(api.search_tweets, q=query, lang="en", tweet_mode="extended").items(count):
-        tweets.append({
-            "tweetId": status.id_str,
-            "username": status.user.screen_name,
-            "text": status.full_text,
-            # Add more fields as needed
-        })
+    try:
+        for status in tweepy.Cursor(api.search_tweets, q=query, lang="en", tweet_mode="extended").items(count):
+            tweets.append({
+                "tweetId": status.id_str,
+                "username": status.user.screen_name,
+                "text": status.full_text,
+                # Add more fields as needed
+            })
+    except Exception as e:
+        print(f"Error fetching tweets: {e}")
     return tweets
 
 def main():
